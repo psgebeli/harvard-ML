@@ -1,0 +1,94 @@
+Lecture 0: Search
+
+Search problems involve an agent that is given an initial state and a goal state, and it returns a solution of how to get
+from the former to the latter. A navigator app uses a typical search process, where the agent receives your current location
+and desired location as input, then returns a suggested path based on a search algorithm. However, there are many other 
+forms of search problems, like puzzles or mazes. 
+
+Finding a solution to a 15 puzzle, for example, would require the use of a search algorithm.
+
+Defs
+----
+
+--> Agent: An entity that perceives its environment and acts upon that environment. In a navigator app, the agent 
+would be a representation of a car that needs to decide on which actions to take to arrive at the destination.
+
+--> State: A configuration of an agent in its environment. In a 15 puzzle, a state is any one way that all the #s
+are arranged.
+    --> Initial State: State from which the search algorithm starts (current location for navigator app)
+
+--> Actions: Choices that can be made in a state. More precisely, a function Actions(s) that receives a state s 
+and returns the set of executable actions. For example, in a 15 puzzle, the actions of a given state are the ways
+you can slide squares in the current configuration. 
+
+--> Transition Model: A description of what state results from performing any applicable action in any state. 
+More precisely, a function Results(s,a) takes a state and an action as input and returns the resulting state. 
+In a 15 puzzle (state s) moving a square in any direction (action a) will bring the puzzle to a new configuration.
+
+--> State Space: The set of all states reachable from the initial state by any sequence of actions. For example, in a 
+15 puzzle, state space consists of 16!/2 configurations on the board that can be reached from any initial state.
+The state space can be visualized as a directed graph with states, represented as nodes, and actions, represented 
+as arrows between nodes.
+
+--> Goal Test: The condition that determines whether a given state is a goal state. For example, in a navigator app,
+the goal test would be whether the current location of the agent (the representation of the car) is at the 
+destination. If it is, good, if not, continue searching.
+
+--> Path Cost: A numerical cost associated with a given path. For example, a navigator app does not bring  you to your 
+goal, it does so while minimizing the path cost (fastest way possible to get to goal state).
+
+
+-- SOLVING SEARCH PROBLEMS 
+
+The solution to a search problem is a sequence of actions that leads from the initial state to the goal state.
+The OPTIMAL solution is the solution that has the lowest path cost.
+
+In a search process, data is often stored in a NODE, which is a data structure containing:
+    1. A state 
+    2. Its parent node, through which the current node was generated
+    3. The action that was applied to the parent note to get to the current node
+    4. The path cost from the initial state to this node 
+
+Nodes contain info that make them very useful in search algorithms. They contain a state, which can be checked
+using the goal test to see if it is the final state. If it is, the node's path cost can be compared to the path cost
+of other nodes, which allows choosing the optimal solution. Once the node is chosen, by virtue of storing 
+the parent node and the action that led to it, its possible to trace back every step
+of the way from the initial state to this node. This sequence of actions is the solution.
+
+However, nodes are simply a data structure -- they don't search, but merely hold info. To actually search, we use the 
+FRONTIER, the mechanism that manages the nodes. The frontier starts by containing an initial state and an empty set of 
+explored items, and then repeats the following actions until a solution is reached: 
+
+    APPROACH
+    1. If the frontier is empty, STOP. No solution to problem.
+    2. Remove a node from the frontier. This is the node that will be considered. 
+    3. If this node contains the goal state, return the solution and stop. 
+    Otherwise, expand the node (find all new nodes that could be reached) and add resulting nodes to the frontier.
+    Add the current node to the explored set. 
+
+-- Depth-First Search 
+
+Which nodes should be considered first? 
+
+In the depth-first search (DFS) approach, the frontier is managed as a stack data structure, i.e "last-in first-out". That is,
+DFS algorithms exhaust each one direction before trying another direction. The first node to remove from the frontier 
+and consider is the last one that was added to the frontier. This goes as deep as possible in one way, 
+and leaves other directions for later.
+
+PROS 
+1. At best, fastest, if it lucks out and chooses the right path by chance. May save memory.
+
+CONS 
+1. Found solution may not be optimal
+2. At worst, slowest, as it will explore every possible path before even getting to the correct one
+    
+-- Breadth-First Search
+
+Search algorithm that always expands the shallowest node in the frontier, frontier uses the queue data structure,
+which is a first-in first-out data type. Opposite of the depth-first search, the breadth-first search always
+expands the oldest frontier node.
+
+Solution will be optimal, as it is the shallowest path. However, excess computational time is used for paths
+that end up not being used.
+
+< TRANSITION TO CODE, STOPPING PT IN LECTURE 50:20 > 
