@@ -91,4 +91,150 @@ expands the oldest frontier node.
 Solution will be optimal, as it is the shallowest path. However, excess computational time is used for paths
 that end up not being used.
 
-< TRANSITION TO CODE, STOPPING PT IN LECTURE 50:20 > 
+< TRANSITION TO CODE MAZE.PY > 
+
+Can we make this algorithm more intelligent? In other words, can we make 
+its choices be closer to human intuition?
+
+-- Uninformed Search 
+
+Search strategy that uses no problem-specific knowledge
+
+-- Informed Search 
+
+Search strategy that uses problem-specific knowledge to find solutions
+more efficiently. Eg in a maze, being in a position closer to the goal
+is generally good.
+
+TYPES:
+
+1. Greedy best-first search (GBFS): Search algorithm that expands the
+node that is closest to the goal, as estimated by a heuristic function
+h(n)
+
+    What can h(n) actually look like?
+
+    In the case of a maze, it needs to answer the question: between
+    cells A and B, which is better? Where should I be?
+
+    Like a human, it should recognize that, via coordinate pairs, B is 
+    closer to the goal. So h(n) in this case could be the "Manhattan distance"
+    (distance using left/right and up/down movement). 
+
+    In practice, whenever there is a decision between two nodes, it chooses 
+    the node with the smaller heuristic.
+
+    **Effectiveness is based on the effectiveness of the heuristic, which 
+    is often tricky to determine!
+
+    "Greedy" because it only looks locally, it doesnt consider the whole
+    picture.
+
+2. A* search: Search algorithm that expands the node with the lowest
+value of g(n) + h(n), where
+g(n) = cost to reach node 
+h(n) = estimated cost to goal 
+
+In the maze, this algorithm considers that taking 5 steps to get to a 13 
+is better than taking 10 steps to get to a 6. So once it reaches that 6,
+it will back track!
+
+Optimal if:
+    1. h(n) is admissible (never overestimates the true cost)
+    2. h(n) is consistent (for every node n and successing node n'
+    with step cost c, h(n) <= h(n') + c)
+
+Pretty good algorithm -- IF the heuristic is good!
+
+
+-- Adversarial Search 
+
+There is often more than one agent. It is common to have an adversary,
+an agent trying to prevent us from achieving a goal -- think of tic tac 
+toe AIs, chess AIs, etc. Adversarial search algorithms take this into
+account.
+
+1. Minimax: MAX player aims to maximize the score, while the MIN player
+aims to minimize the score.
+
+    In tic tac toe, assume O winning is score=-1. Tie score=1. X win
+    score=1.
+    In this case, X is the max player, since the maximum score is them
+    winning.
+
+    To make a tic-tac-toe game, we need:
+
+        S0: initial state
+        Player(s): function that returns which players turn it is in state
+        s 
+        Actions(s): returns legal states in move s 
+        Result(s, a): returns state after action a is taken in state s 
+        Terminal(s): checks if the state s is terminal (game over)
+        Utility(s): final numerical value for terminal state s 
+
+        Minimax is recursive. If there are multiple moves, it considers
+        all moves, the states resulting from those moves, and then what
+        X will do to maximize the score. 
+
+        If a particular move will only lead to X winning, then that 
+        board has a value of 1. 
+
+        Eg if there are two moves and one action leads to a board with
+        value 1, and the other leads to value 0, then of course, the min
+        player will choose the latter.
+
+
+        PSEUDOCODE:
+
+        Given a state s:
+
+            MAX picks action a in Actions(s) that produces highest
+            value of Min-Value(Results(s, a))
+            MIN picks action a in Actions(s) that produces smallest 
+            value of Max-Value(Results(s, a))
+
+        function Max-Value(s):
+            if terminal(s):
+                return Utility(s)
+            v = -inf 
+            for action in Actions(s):
+                v = max(v, Min-Value(Result(s, a)))
+            return v
+
+        function Min-Value(s): 
+            if terminal(s):
+                return Utility(s)
+            v = inf
+            for action in Actions(s):
+                v = min(v, Max-Value(Result(s, a)))
+            return v
+
+        This can definitely get long.. imagine chess! What kind of 
+        optimizations can be made?
+
+        Alpha-Beta Pruning can neglect nodes that will not change the 
+        decision anyway. For example, consider max player has the option 
+        of boards A and B. Board A has a value of 4, which was calculated.
+        Board B's score will depend on the min players moves, so those must
+        be considered. The first min player option leads to a value 5, 
+        the second leads to a value 3, and the third leads to a value 8. 
+        As soon as this 3 is calculated, we know that this boards value is 
+        AT MOST 3. Why bother checking the last node if we already know the
+        first board is better?
+
+        But this doesnt work for extremely deep games. Just consider chess,
+        with over 10^29000 possible games. In this case, we need...
+
+        -- Depth-limited Minimax: Moves further than some cap, say, 10
+        moves, wont be considered.
+
+            How are values calculated then, if we dont know the value
+            a move leads to?
+
+            --> evaluation function: function that estimates the expected
+            utility of the game from a given state.
+
+                e.g chess --> value = 0.8 means white is likely to win,
+                but not guaranteed.
+
+    
