@@ -396,3 +396,8 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Large csv files for degrees/
+projects/project0/degrees/large
+
+
