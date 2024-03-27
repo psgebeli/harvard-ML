@@ -1,0 +1,93 @@
+
+-- Knowledge based agents: agents that reason by operating 
+on internal representations of Knowledge
+
+    - If it didnt rain, Harry visited Hagrid today.
+    - Harry visited Hagrid or Dumbledore today, but not both.
+    - Harry visited Dumbledore today.
+
+    - Consider these three pieces of intelligence in the 
+    "knowledge base". As humans, based on this knowledge, 
+    we can conclude that:
+        1. Harry did not visit Hagrid today
+        2. It rained today
+
+    - How can we make an agent reason the same way?
+
+-- Sentence: an assertion about the world in a knowledge
+representation language (in terms of AI)
+
+-- Propositional Logic 
+
+    - Symbols 
+
+    1.  P           Q           R 
+        ^           ^           ^
+                statements 
+
+    2. Logical connectives 
+
+        not: (cant type this symbol) -
+        and: ^
+        or: v
+        implication: -->
+        biconditional: <-->
+
+    - What is actually true in the world?
+
+        - Model: assignment of a truth value to every
+        propositional symbol 
+        e.g {P = true, Q = false}
+
+        - Knowledge base: a set of sentences known by 
+        a knowledge-based agent
+
+        - Entailment 
+
+            a |= b 
+
+            In every model in which a is true, then
+            b is also true. (eg a = its tuesday in jan
+                            b = its jan)
+
+        - Inference: the process of deriving new 
+        sentences from old sentences
+
+            - Example
+
+                1.  P: its tuesday 
+                    Q: its raining
+                    R: Harry will go for a run 
+
+                    knowledge base KB: 
+                        (P ^ -Q) --> R
+                        P
+                        -Q
+                    
+                    Inference: R 
+            
+            - Inference algorithms
+
+                Main question: Does KB |= a?
+
+                1. Model Checking
+
+                    To determine if KB |= a, 
+
+                        1. Enumerate all possible models (consider
+                        all possible truth values for statements)
+
+                        2. If in every model where KB is true, a
+                        is true, then KB |= a. Otherwise, 
+                        KB !|= a
+
+                        SWITCH TO CODE
+                        --> Knowledge Engineering: turning problems into
+                        a language that the computer can understand
+                        STOP: 41.04
+
+
+    
+
+
+        
