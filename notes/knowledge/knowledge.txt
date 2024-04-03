@@ -82,12 +82,243 @@ representation language (in terms of AI)
                         KB !|= a
 
                         SWITCH TO CODE
+
                         --> Knowledge Engineering: turning problems into
                         a language that the computer can understand
-                        STOP: 41.04
+                        
+                            Examples
+
+                            1. Clue 
+                            
+                            People                  Rooms           Weapons
+                            Col. Mustard            Ballroom        Knife
+                            Prof. Plum              Kitchen         Revolver
+                            Ms. Scarlet             Library         Wrench
+
+                            Randomly shuffled, one from each category taken 
+                            into a sealed envelope. Whats in the envelope?
+                            (envelope is the killer)
+
+                            symbols: 
+                            mustard, plum, scarlet 
+                            ballroom, kitchen, library 
+                            knife, revolver, wrench 
+
+                            KB: (mustard v plum v scarlet) 
+                                (ballroom v kitchen v library)
+                                (knife v revolver v wrench)
+
+                            Players then get cards and can then make inferences
+
+                            Transition to clue.py
+
+                            Note that this is basically doing logic puzzles.
+                            Transition to puzzle.py
+                            Transition to mastermind.py
+
+                Not efficient! With more variables, model Checking
+                becomes less and less good because we have to
+                enumerate EVERY possibility.
+
+            2. Inference Rules 
+
+                    Premise
+                -------------------
+                    Conclusion
+
+                eg 
+
+                If it is raining, then Harry is inside.
+                It is raining.
+                --------------------------------------
+                Harry is inside.
+
+                (a): This inference rule is Modus Ponens:
+
+                    a --> b 
+                    b 
+                    -------
+                    b
+
+                (b) And Elimination:
+
+                a ^ b                   a ^ b   
+                -----       or          -----
+                a                       b
+
+                (c) Double negation elimination:
+
+                -(-a)
+                -----
+                a
+
+                (d) Implication elimination:
+
+                    a --> b
+                    -------
+                    -a v b 
+
+                (e) Biconditional elimination
+                    
+                    a <--> b
+                    --------
+                    (a --> b) ^ (b --> a)
+
+                (f) De Morgan's Laws
+
+                    -(a ^ b)
+                    --------
+                    -a v -b 
 
 
+                    -(a v b)
+                    --------
+                    -a v -b
+
+                (g) Distributive Laws
+
+                    (a ^ (b v c))
+                    -------------
+                    (a ^ b) v (a ^ c)    
+
+                    (a v (b ^ c))
+                    -------------
+                    (a v b) ^ (a v c)
+
+                How can we use these?
+
+                Theorem Proving:
+                    1. initial state: starting KB
+                    2. actions: inference rules 
+                    3. transition model: new KB after inference
+                    4. goal test: check statement were trying to prove
+                    5. path cost function: number of steps in proof (number of inference rules needed)
+
+                Resolution:
+
+                    Based on this the unit resolution rule:
+
+                        a v b 
+                        -a
+                        ------
+                        b
+
+                        a v b 
+                        -a v c
+                        ------
+                        b v c
+
+                    Clause: a disjunction of literals (eg a v b v c)
+
+                    Conjuntive normal form: a logical sentence that is 
+                    a conjunction of clauses
+                    eg (a v b v c) ^ (d v -e) ^ (f v g)
+
+                    Goal is to turn logical sentences into conjunctive
+                    normal form. Steps are:
+
+                        (a) Eliminate biconditionals
+                        (b) Eliminate implications 
+                        (c) Move (not) inwards using De Morgan's Laws
+                        (d) Distributive law 
+
+                    Example:
+
+                        (a v b) --> c
+
+                        -(a v b) v c        eliminate implication
+
+                        (-a ^ -b) v c       Demorgans 
+
+                        (-a v c) ^ (-b v c) Distributive
+
+                    Once in this form, clauses are the inputs to 
+                    resolution model 
+
+                    Inference by resolution algorithm:
+
+                        To determine if KB |= a:
+
+                            Check if (KB ^ -a) is a contradiction
+
+                                If so, then KB |= a.
+                                Otherwise, no entailment.
+
+                        AKA..
+
+                        To determine if KB |= a:
+
+                            Convert (KB ^ -a) to conjunctive normal form
+
+                            Keep checking to see if we can use
+                            resolution to produce a new clause.
+
+                                If we ever produce the empty clause,
+                                contradiction, so KB |= a.
+
+                                
+                        Example: 
+
+                        (A v B) ^ (-B v C) ^ (-C) |= A?
+
+                        (A v B) ^ (-B v C) ^ (-C) ^ -A
+
+                        (-B v C) ^ (-C) have complimentary clauses so
+                        resolve --> -B 
+
+                        so (A v B) ^ (-B v C) ^ -C ^ -A ^ -B 
+                        
+                        Resolve (A v B) ^ -B --> A 
+
+                        so (A v B) ^ (-B v C) ^ -C ^ -A ^ -B ^ A 
+
+                        Resolve -A ^ A --> () 
+
+                        Contradiction so (A v B) ^ (-B v C) ^ (-C) |= A
+
+-- First-Order Logic
+
+
+    Constant symbols: objects (like people or houses) (Minerva, Gryffindor, etc)
+    Predicate symbols: functions (isPerson, belongsTo, ...)
     
+    Ex 
+
+    Person(Minerva) 
+    House(Gryffindor)
+    -House(Minerva)
+
+    Some predicates express binary relations
+    BelongsTo(Minerva, Gryffindor) (Minerva belongs to Gryffindor)
+
+    This ends up expressing similar sentences with a smaller amount of
+    symbols.
+
+
+    Universal Quantification: 
+
+        For all x, BelongsTo(x, Gryffindor) --> -BelongsTo(x, Hufflepuff)
+
+    Existential Quantification: 
+
+        There exists an x such that House(x) ^ BelongsTo(Minerva, x)
+
+    Combining these, we can make very sophisticated statements
+
+        for all x, Person(x) --> (There exists a y such that House(y) ^ BelongsTo(x, y))
+
+La fin.
+
+
+
+                    
+
+            
+                                
+
 
 
         
+
+
+            
